@@ -43,10 +43,25 @@ io.on("connection", (socket) => {
     io.emit("getplayerlist", gameData.players);
   });
 
+  socket.on('disconnect', () => {
+    // Find the index of the player with the disconnecting socket ID
+    const disconnectingPlayerIndex = gameData.players.findIndex(player => player.socketId === socket.id);
+  
+    if (disconnectingPlayerIndex !== -1) {
+      // Remove the player from the array
+      gameData.players.splice(disconnectingPlayerIndex, 1);
+      console.log(`User with socket ID ${socket.id} disconnected`);
+      io.emit('updateroom', gameData);
+    } else {
+      console.log('User disconnected, but not found in the player list');
+    }
+  });
+
   socket.on("joingame", (username) => {
     if (gameData.players.length < 4) {
       gameData.players.push({
         user: username,
+        socketId: socket.id,  // Store the unique socket ID
         resources: {
           citizens: 10,
           townGold: 100,
@@ -129,7 +144,11 @@ io.on("connection", (socket) => {
 
       console.log(gameData.players[playerIndex]);
   });
+
+  
 });
+
+
 
 server.listen(port, () => {
   console.log("listening on port " + port);
