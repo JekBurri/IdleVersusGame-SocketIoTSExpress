@@ -3,10 +3,94 @@ import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../App";
 import { player } from "./WaitingRoom";
 
+const getResourceImage = (resource: string) => {
+  switch (resource) {
+    case "townGold":
+      return "/townGold.png";
+    case "wood":
+      return "/wood.png";
+    case "stone":
+      return "/stone.png";
+    case "iron":
+      return "/iron.png";
+    case "gold":
+      return "/gold.png";
+    case "wheat":
+      return "/wheat.png";
+    case "citizens":
+      return "/citizens.png";
+    case "health":
+      return "/health.png";
+    case "hunger":
+      return "/hunger.png";
+  }
+};
+
 const Game = () => {
   const { gameState } = useContext(GameContext);
   const [playerState, setPlayerState] = useState<player[]>([]);
   const [sellAmount, setSellAmount] = useState("");
+  const [items] = useState([
+    {
+      name: "Vampiric Scepter",
+      description: "Lifesteal 10% of damage dealt",
+      image: "/path/to/vampiric_scepter.png",
+      price: 200,
+    },
+    {
+      name: "Infinity Edge",
+      description: "20% crit chance",
+      image: "/path/to/infinity_edge.png",
+      price: 300,
+    },
+    {
+      name: "Farmers Hat",
+      description: "50% more wheat (upgradable 3 times up to 200% more wheat)",
+      upgradeable: true,
+      maxUpgrade: 3,
+      image: "/path/to/farmers_hat.png",
+      price: 400,
+    },
+    {
+      name: "Miners Pickaxe",
+      description: "50% more stone (upgradable 3 times up to 200% more stone)",
+      upgradeable: true,
+      maxUpgrade: 3,
+      image: "/path/to/miners_pickaxe.png",
+      price: 400,
+    },
+    {
+      name: "Woodcutters Axe",
+      description: "50% more wood (upgradable 3 times up to 200% more wood)",
+      upgradeable: true,
+      maxUpgrade: 3,
+      image: "/path/to/woodcutters_axe.png",
+      price: 400,
+    },
+    {
+      name: "Iron Pickaxe",
+      description: "50% more iron (upgradable 3 times up to 200% more iron)",
+      upgradeable: true,
+      maxUpgrade: 3,
+      image: "/path/to/iron_pickaxe.png",
+      price: 400,
+    },
+    {
+      name: "Regenerative Rave Band",
+      description:
+        "0.1 health per second (upgradeable 3 times up to 0.4 health per second)",
+      upgradeable: true,
+      maxUpgrade: 3,
+      image: "/path/to/regenerative_rave_band.png",
+      price: 400,
+    },
+  ]);
+
+  const buyItem = (item: any) => {
+    // Implement the logic for buying the item
+    console.log(`Buying ${item.name}`);
+  };
+
   const yourPlayer = playerState.find(
     (player: any) => player.user === gameState.user
   );
@@ -38,7 +122,7 @@ const Game = () => {
   const handleSell = (material: string) => {
     // Implement sell logic here
     console.log(`Selling ${material}`);
-    gameState.socket.emit("sell", material, sellAmount, gameState.user)
+    gameState.socket.emit("sell", material, sellAmount, gameState.user);
   };
 
   const handleBuild = (buildingType: string) => {
@@ -89,26 +173,12 @@ const Game = () => {
                             key={resource}
                             className="flex items-center mr-4 mb-2 text-white"
                           >
-                            <div
-                              className={`w-4 h-4 rounded-full mr-2 ${
-                                resource === "townGold"
-                                  ? "bg-yellow-500"
-                                  : resource === "citizens"
-                                  ? "bg-green-500"
-                                  : resource === "wood"
-                                  ? "bg-brown-500"
-                                  : resource === "stone"
-                                  ? "bg-gray-500"
-                                  : resource === "iron"
-                                  ? "bg-gray-700"
-                                  : resource === "gold"
-                                  ? "bg-yellow-400"
-                                  : resource === "wheat"
-                                  ? "bg-yellow-300"
-                                  : "bg-gray-300"
-                              }`}
-                            ></div>
-                            <p>{`${resource}: ${value}`}</p>
+                            <img
+                              className="w-4 h-4 rounded-full mr-2"
+                              src={getResourceImage(resource)}
+                              alt={resource}
+                            />
+                            <p>{`${value}`}</p>
                           </div>
                         )
                       )}
@@ -165,7 +235,9 @@ const Game = () => {
               min="0"
               placeholder="amount"
               value={sellAmount}
-              onChange={(e) => {setSellAmount(e.target.value)}}
+              onChange={(e) => {
+                setSellAmount(e.target.value);
+              }}
             />
 
             <select
@@ -183,57 +255,9 @@ const Game = () => {
             </select>
           </div>
         </div>
-
-        {/* Player Stat UI */}
-        <div className="flex justify-between">
-          <div className="bg-red-200 p-4 mr-4 flex-1">
-            <h2 className="text-xl font-semibold mb-2">Hunger</h2>
-            <div className="bg-red-500 h-8 w-full rounded-md relative">
-              {yourPlayer && (
-                <div
-                  className="bg-green-500 h-full rounded-md"
-                  style={{
-                    width: `${yourPlayer.resources.hunger}%`,
-                  }}
-                ></div>
-              )}
-              {yourPlayer && (
-                <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                  Your Hunger:{" "}
-                  {yourPlayer.resources
-                    ? yourPlayer.resources.hunger.toFixed(4)
-                    : ""}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-blue-200 p-4 flex-1">
-            <h2 className="text-xl font-semibold mb-2">Health</h2>
-            <div className="bg-blue-500 h-8 w-full rounded-md relative">
-              {yourPlayer && (
-                <div
-                  className="bg-green-500 h-full rounded-md"
-                  style={{
-                    width: `${yourPlayer.resources.health}%`,
-                  }}
-                ></div>
-              )}
-              {yourPlayer && (
-                <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                  Your Health:{" "}
-                  {yourPlayer.resources
-                    ? yourPlayer.resources.health.toFixed(4)
-                    : ""}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* My stats UI */}
         {yourPlayer && (
-          <div className={"mb-4"}>
+          <div className={"mb-4 p-2 bg-gray-500 rounded-md shadow-md"}>
             <div className="flex items-center">
               <img
                 src={`https://picsum.photos/200/300?random=${0}`}
@@ -244,44 +268,67 @@ const Game = () => {
                 <p className={`font-semibold text-lg mb-1 ${"text-blue-400"}`}>
                   {yourPlayer && yourPlayer.user}
                 </p>
-                <div className="flex flex-col flex-wrap">
+                <div className="flex flex-wrap">
                   {Object.entries(yourPlayer.resources).map(
-                    ([resource, value]) =>
-                      resource !== "hunger" &&
-                      resource !== "health" && (
-                        <div
-                          key={resource}
-                          className="flex items-center mr-4 mb-2 text-white"
-                        >
-                          <div
-                            className={`w-4 h-4 rounded-full mr-2 ${
-                              resource === "townGold"
-                                ? "bg-yellow-500"
-                                : resource === "citizens"
-                                ? "bg-green-500"
-                                : resource === "wood"
-                                ? "bg-brown-500"
-                                : resource === "stone"
-                                ? "bg-gray-500"
-                                : resource === "iron"
-                                ? "bg-gray-700"
-                                : resource === "gold"
-                                ? "bg-yellow-400"
-                                : resource === "wheat"
-                                ? "bg-yellow-300"
-                                : "bg-gray-300"
-                            }`}
-                          ></div>
-                          <p>{`${resource}: ${value}`}</p>
-                        </div>
-                      )
+                    ([resource, value]) => (
+                      <div
+                        key={resource}
+                        className="flex items-center mr-4 mb-2 text-white"
+                      >
+                        <img
+                          className="w-10 h-4=10 rounded-full mr-2"
+                          src={getResourceImage(resource)}
+                          alt={resource}
+                        />
+                        <p className="text-xl">{`${value}`}</p>
+                      </div>
+                    )
                   )}
                 </div>
               </div>
             </div>
           </div>
         )}
+        {/* Buildings UI */}
+        {/* ITEMS Shop UI - can buy various roguelike weapons (5 to start in a flex horizontal scroll shop image placehold on top and buy button underneath
+          
+          items include:
+          Vampiric Scepter - lifesteal 10% of damage dealt
+          Infinity Edge - 20% crit chance
+          Farmers Hat - 50% more wheat (upgradable 3 times up to 200% more wheat)
+          Miners Pickaxe - 50% more stone (upgradable 3 times up to 200% more wheat)
+          Woodcutters Axe - 50% more wood (upgradable 3 times up to 200% more wheat)
+          Iron Pickaxe - 50% more iron (upgradable 3 times up to 200% more wheat)
+          Regenerative Rave Band - 0.1 health per second (upgradeable 3 times up to 0.4 health per second)
+
+          
+          */}
       </div>
+      {/* <div className="flex p-4">
+        {items.map((item, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-20 h-20 rounded-full mb-2"
+            />
+            <p className="text-center font-semibold mb-2">{item.name}</p>
+            <p className="text-xs mb-2">{item.description}</p>
+            <p className="text-sm font-bold mb-2">${item.price}</p>
+            {item.upgradeable && (
+              <p className="text-xs mb-2">
+                Upgradeable ({item.maxUpgrade} times)
+              </p>
+            )}
+            <button
+              onClick={() => buyItem(item)}
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            >
+              Buy
+            </button>
+          </div>
+        ))}
+      </div> */}
     </div>
   );
 };
