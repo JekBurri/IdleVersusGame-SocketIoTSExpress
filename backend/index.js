@@ -9,6 +9,11 @@ let gameData = {
   players: [],
 };
 
+let goldValue = 1;
+setInterval(() => {
+  goldValue = Math.floor(Math.random() * (5 - 1) + 1);
+},200)
+
 const playerDataTemplate = {
   citizens: 0,
   townGold: 0,
@@ -50,9 +55,9 @@ io.on("connection", (socket) => {
           wheat: 0,
           gold: 0,
           iron: 0,
-          health:100,
-          hunger:100,
-        }
+          health: 100,
+          hunger: 100,
+        },
       });
       io.emit("updateroom", gameData);
     } else {
@@ -60,32 +65,70 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("updatePlayer", (player, data) => {
-
-  })
+  socket.on("updatePlayer", (player, data) => {});
 
   socket.on("fetchState", () => {
     socket.emit("getPlayerState", gameData);
-  })
+  });
 
   socket.on("action", (action, player) => {
-    
-
-    // Find the index of the player in the gameData.players array
     const playerIndex = gameData.players.findIndex(p => p.user === player);
+    switch (action) {
+      case "wood":
+        gameData.players[playerIndex].resources.hunger -= 0.2;
+        break;
+      case "iron":
+        gameData.players[playerIndex].resources.hunger -= 0.7;
+        break;
+      case "gold":
+        gameData.players[playerIndex].resources.hunger -= 2.2;
+        break;
+      case "wheat":
+        gameData.players[playerIndex].resources.hunger -= 0.08;
+        break;
+      case "stone":
+        gameData.players[playerIndex].resources.hunger -= 1;
+        break;
+      default:
+        break;
+      }
+      gameData.players[playerIndex].resources[action] += 1;
+      io.emit("getPlayerState", gameData);
 
-    // Check if the player is found in the array
-    if (playerIndex !== -1) {
-        // Increment the specified resource for the player
-        gameData.players[playerIndex].resources[action] += 1;
-        console.log(gameData.players[playerIndex])
+      console.log(gameData.players[playerIndex]);
+  });
 
-        // Emit the updated gameData to the client(s)
-        io.emit("getPlayerState", gameData);
-    }
-  })
+  socket.on("sell", (action,amount, player) => {
+    const playerIndex = gameData.players.findIndex(p => p.user === player);
+    switch (action) {
+      case "wood":
+        gameData.players[playerIndex].resources.wood -= amount;
+        gameData.players[playerIndex].resources.townGold += (0.2*amount);
+        break;
+      case "iron":
+        gameData.players[playerIndex].resources.iron -= amount;
+        gameData.players[playerIndex].resources.townGold += (0.3*amount);
+        break;
+      case "gold":
+        gameData.players[playerIndex].resources.gold -= amount;
+        gameData.players[playerIndex].resources.townGold += (goldValue*amount);
+        break;
+      case "wheat":
+        gameData.players[playerIndex].resources.wheat -= amount;
+        gameData.players[playerIndex].resources.townGold += (0.2*amount);
+        break;
+      case "stone":
+        gameData.players[playerIndex].resources.stone -= amount;
+        gameData.players[playerIndex].resources.townGold += (0.25*amount);
+        break;
+      default:
+        break;
+      }
+      gameData.players[playerIndex].resources[action] += 1;
+      io.emit("getPlayerState", gameData);
 
-
+      console.log(gameData.players[playerIndex]);
+  });
 });
 
 server.listen(port, () => {
