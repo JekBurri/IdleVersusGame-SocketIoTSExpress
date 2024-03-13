@@ -6,6 +6,11 @@ import { player } from "./WaitingRoom";
 const Game = () => {
   const { gameState } = useContext(GameContext);
   const [playerState, setPlayerState] = useState<player[]>([]);
+  const [sellAmount, setSellAmount] = useState("");
+  const yourPlayer = playerState.find(
+    (player: any) => player.user === gameState.user
+  );
+
   useEffect(() => {
     if (gameState.socket) {
       console.log("Waiting in game state");
@@ -15,7 +20,13 @@ const Game = () => {
       gameState.socket.on("getPlayerState", (state: player[]) => {
         // @ts-ignore
         setPlayerState(state.players);
-        console.log(JSON.stringify(state));
+        console.log(
+          "YA YEET" +
+            playerState[
+              playerState.findIndex((p: any) => p.user === gameState.user)
+            ]
+        );
+        // console.log(JSON.stringify(state));
       });
     }
   }, [gameState.socket]);
@@ -27,64 +38,91 @@ const Game = () => {
   const handleSell = (material: string) => {
     // Implement sell logic here
     console.log(`Selling ${material}`);
+    gameState.socket.emit("sell", material, sellAmount, gameState.user)
+  };
+
+  const handleBuild = (buildingType: string) => {
+    // Implement build logic here
+    console.log(`Building ${buildingType}`);
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex flex-col h-screen">
       {/* Left Sidebar */}
-      <div className="flex">
+      <div className="flex justify-center">
         {/* Players Sidebar */}
-        <div className="bg-gray-200 p-4">
-          <h2 className="text-xl font-semibold mb-4">Players</h2>
-          {playerState.map((player, index) => (
-            <div key={player.user} className={index === 0 ? "mb-6" : "mb-4"}>
-              <img
-                src={"https://picsum.photos/200/300"}
-                alt={player.user}
-                className={
-                  player.user === gameState.user
-                    ? "w-20 h-20 rounded-full mb-2"
-                    : "w-10 h-10 rounded-full mr-2"
-                }
-              />
-              <div className="flex flex-col">
-                <p
-                  className={`font-semibold text-lg mb-1 ${
-                    player.user === gameState.user ? "text-blue-600" : "text-black"
-                  }`}
-                >
-                  {player.user}
-                </p>
-                {index === 0 ? (
-                  <div className="flex flex-col text-gray-700">
-                    <p>Town Gold: {player.resources.townGold}</p>
-                    <p>Citizens: {player.resources.citizens}</p>
-                    <p>Wood: {player.resources.wood}</p>
-                    <p>Stone: {player.resources.stone}</p>
-                    <p>Iron: {player.resources.iron}</p>
-                    <p>Gold: {player.resources.gold}</p>
-                    <p>Wheat: {player.resources.wheat}</p>
-                  </div>
-                ) : (
+        <div className="bg-gray-800 m-4 p-4 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-semibold text-white mb-4">Players</h2>
+          {playerState
+            .filter((player) => player.user !== gameState.user)
+            .map((player, index) => (
+              <div key={player.user} className={index === 0 ? "mb-6" : "mb-4"}>
+                <div className="flex items-center">
+                  <img
+                    src={`https://picsum.photos/200/300?random=${index}`}
+                    alt={player.user}
+                    className="w-10 h-10 rounded-full mr-2"
+                  />
                   <div className="flex flex-col">
-                    <p>Town Gold: {player.resources.townGold}</p>
-                    <p>Citizens: {player.resources.citizens}</p>
-                    <p>Wood: {player.resources.wood}</p>
-                    <p>Stone: {player.resources.stone}</p>
-                    <p>Iron: {player.resources.iron}</p>
-                    <p>Gold: {player.resources.gold}</p>
-                    <p>Wheat: {player.resources.wheat}</p>
+                    <p
+                      className={`font-semibold text-lg mb-1 ${
+                        player.user === gameState.user
+                          ? "text-blue-400"
+                          : "text-white"
+                      }`}
+                    >
+                      {player.user}
+                    </p>
+                    {/* Attack Player Button */}
+                    <div className="">
+                      <button
+                        onClick={() => handleAction("attackPlayer")}
+                        className="bg-red-500 text-white p-1 rounded-md"
+                      >
+                        Attack Player
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap">
+                      {Object.entries(player.resources).map(
+                        ([resource, value]) => (
+                          <div
+                            key={resource}
+                            className="flex items-center mr-4 mb-2 text-white"
+                          >
+                            <div
+                              className={`w-4 h-4 rounded-full mr-2 ${
+                                resource === "townGold"
+                                  ? "bg-yellow-500"
+                                  : resource === "citizens"
+                                  ? "bg-green-500"
+                                  : resource === "wood"
+                                  ? "bg-brown-500"
+                                  : resource === "stone"
+                                  ? "bg-gray-500"
+                                  : resource === "iron"
+                                  ? "bg-gray-700"
+                                  : resource === "gold"
+                                  ? "bg-yellow-400"
+                                  : resource === "wheat"
+                                  ? "bg-yellow-300"
+                                  : "bg-gray-300"
+                              }`}
+                            ></div>
+                            <p>{`${resource}: ${value}`}</p>
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow p-8">
-        <div className="flex justify-between mb-4">
+      <div className="flex-grow p-4 m-4 bg-gray-800 rounded-lg shadow-lg">
+        <div className="flex flex-col justify-between mb-4">
           {/* Action Buttons */}
           <div>
             <button
@@ -120,53 +158,30 @@ const Game = () => {
           </div>
 
           {/* Shop UI */}
-          <div>
-            <div className="flex">
-              <h2 className="text-xl font-semibold mb-2">Shop</h2>
-              <input
-                className="flex justify-center align-middle self-center border-black border-2 p-2 rounded-md"
-                type="text"
-                placeholder="amount?"
-              />
-            </div>
-            <button
-              onClick={() => handleSell("Wood")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-            >
-              Sell Wood
-            </button>
-            <button
-              onClick={() => handleSell("Stone")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-            >
-              Sell Stone
-            </button>
-            <button
-              onClick={() => handleSell("Iron")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-            >
-              Sell Iron
-            </button>
-            <button
-              onClick={() => handleSell("Gold")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-            >
-              Sell Gold
-            </button>
-            <button
-              onClick={() => handleSell("Wheat")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md"
-            >
-              Sell Wheat
-            </button>
-          </div>
-        </div>
+          <div className="flex gap-2 mt-2">
+            <input
+              className="flex justify-center align-middle self-center p-2 rounded-md w-24"
+              type="number"
+              min="0"
+              placeholder="amount"
+              value={sellAmount}
+              onChange={(e) => {setSellAmount(e.target.value)}}
+            />
 
-        {/* Civilization UI */}
-        <div className="bg-blue-200 p-4 mb-4">
-          <h2 className="text-xl font-semibold mb-2">Your Civilization</h2>
-          {/* Add your civilization components here */}
-          {/* This will be flex icons of the types of buildings, etc */}
+            <select
+              onChange={(e) => handleSell(e.target.value)}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md w-24"
+            >
+              <option value="" disabled selected>
+                Item
+              </option>
+              <option value="wood">Wood</option>
+              <option value="stone">Stone</option>
+              <option value="iron">Iron</option>
+              <option value="gold">Gold</option>
+              <option value="wheat">Wheat</option>
+            </select>
+          </div>
         </div>
 
         {/* Player Stat UI */}
@@ -174,29 +189,98 @@ const Game = () => {
           <div className="bg-red-200 p-4 mr-4 flex-1">
             <h2 className="text-xl font-semibold mb-2">Hunger</h2>
             <div className="bg-red-500 h-8 w-full rounded-md relative">
-              <div
-                className="bg-green-500 h-full rounded-md"
-                style={{ width: `${gameState.user.hunger}%` }}
-              ></div>
-              <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                {gameState.user.hunger}
-              </p>
+              {yourPlayer && (
+                <div
+                  className="bg-green-500 h-full rounded-md"
+                  style={{
+                    width: `${yourPlayer.resources.hunger}%`,
+                  }}
+                ></div>
+              )}
+              {yourPlayer && (
+                <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
+                  Your Hunger:{" "}
+                  {yourPlayer.resources
+                    ? yourPlayer.resources.hunger.toFixed(4)
+                    : ""}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="bg-blue-200 p-4 flex-1">
             <h2 className="text-xl font-semibold mb-2">Health</h2>
             <div className="bg-blue-500 h-8 w-full rounded-md relative">
-              <div
-                className="bg-green-500 h-full rounded-md"
-                style={{ width: `${gameState.user.health}%` }}
-              ></div>
-              <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                {gameState.user.health}
-              </p>
+              {yourPlayer && (
+                <div
+                  className="bg-green-500 h-full rounded-md"
+                  style={{
+                    width: `${yourPlayer.resources.health}%`,
+                  }}
+                ></div>
+              )}
+              {yourPlayer && (
+                <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
+                  Your Health:{" "}
+                  {yourPlayer.resources
+                    ? yourPlayer.resources.health.toFixed(4)
+                    : ""}
+                </p>
+              )}
             </div>
           </div>
         </div>
+
+        {/* My stats UI */}
+        {yourPlayer && (
+          <div className={"mb-4"}>
+            <div className="flex items-center">
+              <img
+                src={`https://picsum.photos/200/300?random=${0}`}
+                alt={yourPlayer && yourPlayer.user}
+                className="w-10 h-10 rounded-full mr-2"
+              />
+              <div className="flex flex-col">
+                <p className={`font-semibold text-lg mb-1 ${"text-blue-400"}`}>
+                  {yourPlayer && yourPlayer.user}
+                </p>
+                <div className="flex flex-col flex-wrap">
+                  {Object.entries(yourPlayer.resources).map(
+                    ([resource, value]) =>
+                      resource !== "hunger" &&
+                      resource !== "health" && (
+                        <div
+                          key={resource}
+                          className="flex items-center mr-4 mb-2 text-white"
+                        >
+                          <div
+                            className={`w-4 h-4 rounded-full mr-2 ${
+                              resource === "townGold"
+                                ? "bg-yellow-500"
+                                : resource === "citizens"
+                                ? "bg-green-500"
+                                : resource === "wood"
+                                ? "bg-brown-500"
+                                : resource === "stone"
+                                ? "bg-gray-500"
+                                : resource === "iron"
+                                ? "bg-gray-700"
+                                : resource === "gold"
+                                ? "bg-yellow-400"
+                                : resource === "wheat"
+                                ? "bg-yellow-300"
+                                : "bg-gray-300"
+                            }`}
+                          ></div>
+                          <p>{`${resource}: ${value}`}</p>
+                        </div>
+                      )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
