@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
 
   socket.on("getplayerlist", () => {
     console.log(gameData.players);
-    socket.emit("getplayerlist", gameData.players);
+    io.emit("getplayerlist", gameData.players);
   });
 
   socket.on("joingame", (username) => {
@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
           hunger:100,
         }
       });
-      socket.emit("updateroom", gameData);
+      io.emit("updateroom", gameData);
     } else {
       socket.emit("roomisfull");
     }
@@ -66,6 +66,23 @@ io.on("connection", (socket) => {
 
   socket.on("fetchState", () => {
     socket.emit("getPlayerState", gameData);
+  })
+
+  socket.on("action", (action, player) => {
+    
+
+    // Find the index of the player in the gameData.players array
+    const playerIndex = gameData.players.findIndex(p => p.user === player);
+
+    // Check if the player is found in the array
+    if (playerIndex !== -1) {
+        // Increment the specified resource for the player
+        gameData.players[playerIndex].resources[action] += 1;
+        console.log(gameData.players[playerIndex])
+
+        // Emit the updated gameData to the client(s)
+        io.emit("getPlayerState", gameData);
+    }
   })
 
 

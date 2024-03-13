@@ -1,7 +1,7 @@
 // Game.tsx
 import { useContext, useEffect, useState } from "react";
 import { GameContext } from "../App";
-import { player } from "./WaitingRoom"
+import { player } from "./WaitingRoom";
 
 const Game = () => {
   const { gameState, setGameState } = useContext(GameContext);
@@ -23,10 +23,12 @@ const Game = () => {
   const [currentPlayerStats, setCurrentPlayerStats] = useState({
     // make a function to get the current player
   });
+  
 
   const handleAction = (action: string) => {
     // Implement action logic here
-    console.log(`Performing action: ${action}`);
+    
+    gameState.socket.emit("action", action, gameState.user);
   };
 
   const handleSell = (material: string) => {
@@ -93,31 +95,31 @@ const Game = () => {
           {/* Action Buttons */}
           <div>
             <button
-              onClick={() => handleAction("Chop Wood")}
+              onClick={() => handleAction("wood")}
               className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
             >
               Chop Wood
             </button>
             <button
-              onClick={() => handleAction("Mine Stone")}
+              onClick={() => handleAction("stone")}
               className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Stone
             </button>
             <button
-              onClick={() => handleAction("Mine Iron")}
+              onClick={() => handleAction("iron")}
               className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Iron
             </button>
             <button
-              onClick={() => handleAction("Mine Gold")}
+              onClick={() => handleAction("gold")}
               className="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Gold
             </button>
             <button
-              onClick={() => handleAction("Harvest Wheat")}
+              onClick={() => handleAction("wheat")}
               className="bg-orange-500 text-white px-4 py-2 rounded-md"
             >
               Harvest Wheat
