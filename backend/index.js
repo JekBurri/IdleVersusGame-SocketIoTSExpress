@@ -43,8 +43,8 @@ io.on("connection", (socket) => {
       gameData.players.push({
         user: username,
         resources: {
-          citizens: 0,
-          townGold: 0,
+          citizens: 10,
+          townGold: 100,
           wood: 0,
           stone: 0,
           wheat: 0,

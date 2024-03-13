@@ -4,7 +4,7 @@ import { GameContext } from "../App";
 import { player } from "./WaitingRoom";
 
 const Game = () => {
-  const { gameState, setGameState } = useContext(GameContext);
+  const { gameState } = useContext(GameContext);
   const [playerState, setPlayerState] = useState<player[]>([]);
   useEffect(() => {
     if (gameState.socket) {
@@ -20,14 +20,7 @@ const Game = () => {
     }
   }, [gameState.socket]);
 
-  const [currentPlayerStats, setCurrentPlayerStats] = useState({
-    // make a function to get the current player
-  });
-  
-
   const handleAction = (action: string) => {
-    // Implement action logic here
-    
     gameState.socket.emit("action", action, gameState.user);
   };
 
@@ -49,7 +42,7 @@ const Game = () => {
                 src={"https://picsum.photos/200/300"}
                 alt={player.user}
                 className={
-                  index === 0
+                  player.user === gameState.user
                     ? "w-20 h-20 rounded-full mb-2"
                     : "w-10 h-10 rounded-full mr-2"
                 }
@@ -57,7 +50,7 @@ const Game = () => {
               <div className="flex flex-col">
                 <p
                   className={`font-semibold text-lg mb-1 ${
-                    index === 0 ? "text-blue-600" : "text-black"
+                    player.user === gameState.user ? "text-blue-600" : "text-black"
                   }`}
                 >
                   {player.user}
@@ -183,10 +176,10 @@ const Game = () => {
             <div className="bg-red-500 h-8 w-full rounded-md relative">
               <div
                 className="bg-green-500 h-full rounded-md"
-                style={{ width: `${currentPlayerStats.hunger}%` }}
+                style={{ width: `${gameState.user.hunger}%` }}
               ></div>
               <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                {currentPlayerStats.hunger}
+                {gameState.user.hunger}
               </p>
             </div>
           </div>
@@ -196,10 +189,10 @@ const Game = () => {
             <div className="bg-blue-500 h-8 w-full rounded-md relative">
               <div
                 className="bg-green-500 h-full rounded-md"
-                style={{ width: `${currentPlayerStats.health}%` }}
+                style={{ width: `${gameState.user.health}%` }}
               ></div>
               <p className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
-                {currentPlayerStats.health}
+                {gameState.user.health}
               </p>
             </div>
           </div>
