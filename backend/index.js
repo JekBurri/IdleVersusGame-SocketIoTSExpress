@@ -115,34 +115,44 @@ io.on("connection", (socket) => {
 
   socket.on("sell", (action,amount, player) => {
     const playerIndex = gameData.players.findIndex(p => p.user === player);
-    switch (action) {
-      case "wood":
-        gameData.players[playerIndex].resources.wood -= amount;
-        gameData.players[playerIndex].resources.townGold += (0.2*amount);
-        break;
-      case "iron":
-        gameData.players[playerIndex].resources.iron -= amount;
-        gameData.players[playerIndex].resources.townGold += (0.3*amount);
-        break;
-      case "gold":
-        gameData.players[playerIndex].resources.gold -= amount;
-        gameData.players[playerIndex].resources.townGold += (goldValue*amount);
-        break;
-      case "wheat":
-        gameData.players[playerIndex].resources.wheat -= amount;
-        gameData.players[playerIndex].resources.townGold += (0.2*amount);
-        break;
-      case "stone":
-        gameData.players[playerIndex].resources.stone -= amount;
-        gameData.players[playerIndex].resources.townGold += (0.25*amount);
-        break;
-      default:
-        break;
-      }
-      gameData.players[playerIndex].resources[action] += 1;
-      io.emit("getPlayerState", gameData);
+    
+    console.log("Player has this much", gameData.players[playerIndex].resources[action])
+    console.log("Player wants to sell this much", amount)
+    if(gameData.players[playerIndex].resources[action] < amount) {
+      console.log("Not enough resources")
+      socket.emit("notEnoughResources", action);
+      return;
+    } else {
+      switch (action) {
+        case "wood":
+          gameData.players[playerIndex].resources.wood -= amount;
+          gameData.players[playerIndex].resources.townGold += (0.2*amount);
+          break;
+        case "iron":
+          gameData.players[playerIndex].resources.iron -= amount;
+          gameData.players[playerIndex].resources.townGold += (0.3*amount);
+          break;
+        case "gold":
+          gameData.players[playerIndex].resources.gold -= amount;
+          gameData.players[playerIndex].resources.townGold += (goldValue*amount);
+          break;
+        case "wheat":
+          gameData.players[playerIndex].resources.wheat -= amount;
+          gameData.players[playerIndex].resources.townGold += (0.2*amount);
+          break;
+        case "stone":
+          gameData.players[playerIndex].resources.stone -= amount;
+          gameData.players[playerIndex].resources.townGold += (0.25*amount);
+          break;
+        default:
+          break;
+        }
+        // gameData.players[playerIndex].resources[action] += 1;
+        io.emit("getPlayerState", gameData);
+  
+        console.log(gameData.players[playerIndex]);
+    }
 
-      console.log(gameData.players[playerIndex]);
   });
 
   
