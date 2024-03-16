@@ -29,6 +29,7 @@ const getResourceImage = (resource: string) => {
 const Game = () => {
   const { gameState } = useContext(GameContext);
   const [playerState, setPlayerState] = useState<player[]>([]);
+  const [sellResource, setSellResource] = useState("");
   const [sellAmount, setSellAmount] = useState("");
   const [items] = useState([
     {
@@ -104,13 +105,9 @@ const Game = () => {
       gameState.socket.on("getPlayerState", (state: player[]) => {
         // @ts-ignore
         setPlayerState(state.players);
-        console.log(
-          "YA YEET" +
-            playerState[
-              playerState.findIndex((p: any) => p.user === gameState.user)
-            ]
-        );
-        // console.log(JSON.stringify(state));
+      });
+      gameState.socket.on("notEnoughResources", (resource:any) => {
+        alert("You do not have enough " + resource + " to sell.");
       });
     }
   }, [gameState.socket]);
@@ -120,9 +117,12 @@ const Game = () => {
   };
 
   const handleSell = (material: string) => {
-    // Implement sell logic here
-    console.log(`Selling ${material}`);
-    gameState.socket.emit("sell", material, sellAmount, gameState.user);
+    if(parseInt(sellAmount) <= 0) {
+      console.log("Invalid amount");
+      return;
+    } else {
+      gameState.socket.emit("sell", material, parseInt(sellAmount), gameState.user);
+    }
   };
 
   const handleBuild = (buildingType: string) => {
@@ -232,7 +232,7 @@ const Game = () => {
             <input
               className="flex justify-center align-middle self-center p-2 rounded-md w-24"
               type="number"
-              min="0"
+              min="1"
               placeholder="amount"
               value={sellAmount}
               onChange={(e) => {
@@ -241,7 +241,7 @@ const Game = () => {
             />
 
             <select
-              onChange={(e) => handleSell(e.target.value)}
+              onChange={(e) => setSellResource(e.target.value)}
               className="bg-gray-500 text-white px-4 py-2 rounded-md w-24"
             >
               <option value="" disabled selected>
@@ -253,6 +253,10 @@ const Game = () => {
               <option value="gold">Gold</option>
               <option value="wheat">Wheat</option>
             </select>
+            <button
+              onClick={() => handleSell(sellResource)}
+              className="bg-gray-500 text-white px-4 py-2 rounded-md"
+            ><p>Sell</p></button>
           </div>
         </div>
         {/* My stats UI */}
@@ -280,7 +284,12 @@ const Game = () => {
                           src={getResourceImage(resource)}
                           alt={resource}
                         />
-                        <p className="text-xl">{`${value}`}</p>
+                        {resource === "hunger" && (
+                          <p className="text-xl">{`${value.toFixed(2)}`}</p>
+                        )}
+                        {resource !== "hunger" && (
+                          <p className="text-xl">{`${value}`}</p>
+                        )}
                       </div>
                     )
                   )}
