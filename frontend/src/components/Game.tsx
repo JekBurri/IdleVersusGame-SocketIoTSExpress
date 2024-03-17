@@ -31,66 +31,66 @@ const Game = () => {
   const [playerState, setPlayerState] = useState<player[]>([]);
   const [sellResource, setSellResource] = useState("");
   const [sellAmount, setSellAmount] = useState("");
-  const [items] = useState([
-    {
-      name: "Vampiric Scepter",
-      description: "Lifesteal 10% of damage dealt",
-      image: "/path/to/vampiric_scepter.png",
-      price: 200,
-    },
-    {
-      name: "Infinity Edge",
-      description: "20% crit chance",
-      image: "/path/to/infinity_edge.png",
-      price: 300,
-    },
-    {
-      name: "Farmers Hat",
-      description: "50% more wheat (upgradable 3 times up to 200% more wheat)",
-      upgradeable: true,
-      maxUpgrade: 3,
-      image: "/path/to/farmers_hat.png",
-      price: 400,
-    },
-    {
-      name: "Miners Pickaxe",
-      description: "50% more stone (upgradable 3 times up to 200% more stone)",
-      upgradeable: true,
-      maxUpgrade: 3,
-      image: "/path/to/miners_pickaxe.png",
-      price: 400,
-    },
-    {
-      name: "Woodcutters Axe",
-      description: "50% more wood (upgradable 3 times up to 200% more wood)",
-      upgradeable: true,
-      maxUpgrade: 3,
-      image: "/path/to/woodcutters_axe.png",
-      price: 400,
-    },
-    {
-      name: "Iron Pickaxe",
-      description: "50% more iron (upgradable 3 times up to 200% more iron)",
-      upgradeable: true,
-      maxUpgrade: 3,
-      image: "/path/to/iron_pickaxe.png",
-      price: 400,
-    },
-    {
-      name: "Regenerative Rave Band",
-      description:
-        "0.1 health per second (upgradeable 3 times up to 0.4 health per second)",
-      upgradeable: true,
-      maxUpgrade: 3,
-      image: "/path/to/regenerative_rave_band.png",
-      price: 400,
-    },
-  ]);
+  // const [items] = useState([
+  //   {
+  //     name: "Vampiric Scepter",
+  //     description: "Lifesteal 10% of damage dealt",
+  //     image: "/path/to/vampiric_scepter.png",
+  //     price: 200,
+  //   },
+  //   {
+  //     name: "Infinity Edge",
+  //     description: "20% crit chance",
+  //     image: "/path/to/infinity_edge.png",
+  //     price: 300,
+  //   },
+  //   {
+  //     name: "Farmers Hat",
+  //     description: "50% more wheat (upgradable 3 times up to 200% more wheat)",
+  //     upgradeable: true,
+  //     maxUpgrade: 3,
+  //     image: "/path/to/farmers_hat.png",
+  //     price: 400,
+  //   },
+  //   {
+  //     name: "Miners Pickaxe",
+  //     description: "50% more stone (upgradable 3 times up to 200% more stone)",
+  //     upgradeable: true,
+  //     maxUpgrade: 3,
+  //     image: "/path/to/miners_pickaxe.png",
+  //     price: 400,
+  //   },
+  //   {
+  //     name: "Woodcutters Axe",
+  //     description: "50% more wood (upgradable 3 times up to 200% more wood)",
+  //     upgradeable: true,
+  //     maxUpgrade: 3,
+  //     image: "/path/to/woodcutters_axe.png",
+  //     price: 400,
+  //   },
+  //   {
+  //     name: "Iron Pickaxe",
+  //     description: "50% more iron (upgradable 3 times up to 200% more iron)",
+  //     upgradeable: true,
+  //     maxUpgrade: 3,
+  //     image: "/path/to/iron_pickaxe.png",
+  //     price: 400,
+  //   },
+  //   {
+  //     name: "Regenerative Rave Band",
+  //     description:
+  //       "0.1 health per second (upgradeable 3 times up to 0.4 health per second)",
+  //     upgradeable: true,
+  //     maxUpgrade: 3,
+  //     image: "/path/to/regenerative_rave_band.png",
+  //     price: 400,
+  //   },
+  // ]);
 
-  const buyItem = (item: any) => {
-    // Implement the logic for buying the item
-    console.log(`Buying ${item.name}`);
-  };
+  // const buyItem = (item: any) => {
+  //   // Implement the logic for buying the item
+  //   console.log(`Buying ${item.name}`);
+  // };
 
   const yourPlayer = playerState.find(
     (player: any) => player.user === gameState.user
@@ -125,10 +125,10 @@ const Game = () => {
     }
   };
 
-  const handleBuild = (buildingType: string) => {
-    // Implement build logic here
-    console.log(`Building ${buildingType}`);
-  };
+  // const handleBuild = (buildingType: string) => {
+  //   // Implement build logic here
+  //   console.log(`Building ${buildingType}`);
+  // };
 
   return (
     <div className="flex flex-col h-screen">
