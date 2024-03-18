@@ -1,0 +1,5 @@
+Local Development
+- Sockets listen to server @ http://localhost:3000
+
+Production Development
+- Sockets listen to server @ wss://backend-idlesockets.fly.dev

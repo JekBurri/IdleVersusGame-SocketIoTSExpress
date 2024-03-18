@@ -30,7 +30,7 @@ app.use(cors());
 const server = http.createServer(app);
 
 app.get('/', (req,res) => {
-  res.send(process.env.EXPRESS_URL);
+  res.send("hello world");
 })
 
 const io = new Server(server, {
