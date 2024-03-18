@@ -14,7 +14,8 @@ function App() {
   const [gameState, setGameState] = useState<any>(initialState);
   const [username, setUsername] = useState("");
   useEffect(() => {
-    const socket = io(`https://${import.meta.env.VITE_URL}:3000`);
+    //TODO: The next line should be http://${import.meta.env.VITE_URL}:3000 for local dev, and wss:// for production hosted
+    const socket = io(`${import.meta.env.VITE_URL}:3000`);
     setSocket(socket);
     setGameState({ ...gameState, socket });
 

@@ -35,7 +35,7 @@ app.get('/', (req,res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: `${process.env.EXPRESS_URL}`,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
