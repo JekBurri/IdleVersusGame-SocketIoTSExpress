@@ -29,9 +29,13 @@ app.use(cors());
 
 const server = http.createServer(app);
 
+app.get('/', (req,res) => {
+  res.send(process.env.EXPRESS_URL);
+})
+
 const io = new Server(server, {
   cors: {
-    origin: `${process.env.EXPRESS_URL}:5173`,
+    origin: `${process.env.EXPRESS_URL}`,
     methods: ["GET", "POST"],
   },
 });
