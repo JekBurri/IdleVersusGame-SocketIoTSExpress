@@ -135,7 +135,7 @@ const Game = () => {
       {/* Left Sidebar */}
       <div className="flex justify-center">
         {/* Players Sidebar */}
-        <div className="bg-gray-800 m-4 p-4 rounded-lg shadow-lg">
+        <div className="bg-gray-800 p-4 m-4 rounded-lg shadow-lg flex-grow">
           <h2 className="text-2xl font-semibold text-white mb-4">Players</h2>
           {playerState
             .filter((player) => player.user !== gameState.user)
@@ -197,31 +197,31 @@ const Game = () => {
           <div>
             <button
               onClick={() => handleAction("wood")}
-              className="bg-green-500 text-white px-4 py-2 rounded-md mr-2"
+              className="bg-black text-white px-4 py-2 rounded-md mr-2"
             >
               Chop Wood
             </button>
             <button
               onClick={() => handleAction("stone")}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
+              className="bg-black text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Stone
             </button>
             <button
               onClick={() => handleAction("iron")}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
+              className="bg-black text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Iron
             </button>
             <button
               onClick={() => handleAction("gold")}
-              className="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2"
+              className="bg-black text-white px-4 py-2 rounded-md mr-2"
             >
               Mine Gold
             </button>
             <button
               onClick={() => handleAction("wheat")}
-              className="bg-orange-500 text-white px-4 py-2 rounded-md"
+              className="bg-black text-white px-4 py-2 rounded-md"
             >
               Harvest Wheat
             </button>
