@@ -91,6 +91,13 @@ io.on("connection", (socket) => {
     socket.emit("getPlayerState", gameData);
   });
 
+  socket.on("attack", (player) => {
+    const playerIndex = gameData.players.findIndex(p => p.user === player);
+    gameData.players[playerIndex].resources.health -= 10;
+    io.emit("getPlayerState", gameData);
+  
+  })
+
   socket.on("action", (action, player) => {
     const playerIndex = gameData.players.findIndex(p => p.user === player);
     switch (action) {

@@ -31,67 +31,7 @@ const Game = () => {
   const [playerState, setPlayerState] = useState<player[]>([]);
   const [sellResource, setSellResource] = useState("");
   const [sellAmount, setSellAmount] = useState("");
-  // const [items] = useState([
-  //   {
-  //     name: "Vampiric Scepter",
-  //     description: "Lifesteal 10% of damage dealt",
-  //     image: "/path/to/vampiric_scepter.png",
-  //     price: 200,
-  //   },
-  //   {
-  //     name: "Infinity Edge",
-  //     description: "20% crit chance",
-  //     image: "/path/to/infinity_edge.png",
-  //     price: 300,
-  //   },
-  //   {
-  //     name: "Farmers Hat",
-  //     description: "50% more wheat (upgradable 3 times up to 200% more wheat)",
-  //     upgradeable: true,
-  //     maxUpgrade: 3,
-  //     image: "/path/to/farmers_hat.png",
-  //     price: 400,
-  //   },
-  //   {
-  //     name: "Miners Pickaxe",
-  //     description: "50% more stone (upgradable 3 times up to 200% more stone)",
-  //     upgradeable: true,
-  //     maxUpgrade: 3,
-  //     image: "/path/to/miners_pickaxe.png",
-  //     price: 400,
-  //   },
-  //   {
-  //     name: "Woodcutters Axe",
-  //     description: "50% more wood (upgradable 3 times up to 200% more wood)",
-  //     upgradeable: true,
-  //     maxUpgrade: 3,
-  //     image: "/path/to/woodcutters_axe.png",
-  //     price: 400,
-  //   },
-  //   {
-  //     name: "Iron Pickaxe",
-  //     description: "50% more iron (upgradable 3 times up to 200% more iron)",
-  //     upgradeable: true,
-  //     maxUpgrade: 3,
-  //     image: "/path/to/iron_pickaxe.png",
-  //     price: 400,
-  //   },
-  //   {
-  //     name: "Regenerative Rave Band",
-  //     description:
-  //       "0.1 health per second (upgradeable 3 times up to 0.4 health per second)",
-  //     upgradeable: true,
-  //     maxUpgrade: 3,
-  //     image: "/path/to/regenerative_rave_band.png",
-  //     price: 400,
-  //   },
-  // ]);
-
-  // const buyItem = (item: any) => {
-  //   // Implement the logic for buying the item
-  //   console.log(`Buying ${item.name}`);
-  // };
-
+  
   const yourPlayer = playerState.find(
     (player: any) => player.user === gameState.user
   );
@@ -112,8 +52,12 @@ const Game = () => {
     }
   }, [gameState.socket]);
 
-  const handleAction = (action: string) => {
+  const handleAction = (action: string, user?: string) => {
     gameState.socket.emit("action", action, gameState.user);
+    if (user) {
+      console.log("Attacking " + user);
+      gameState.socket.emit("attack", user);
+    }
   };
 
   const handleSell = (material: string) => {
@@ -125,10 +69,15 @@ const Game = () => {
     }
   };
 
-  // const handleBuild = (buildingType: string) => {
-  //   // Implement build logic here
-  //   console.log(`Building ${buildingType}`);
-  // };
+  useEffect(() => {
+    console.log(yourPlayer?.resources.health)
+    if(yourPlayer && yourPlayer?.resources.health <= 0) {
+      alert("YOU ARE DEAD");
+      gameState.socket.emit("disconnect");
+      window.close();
+      
+    }
+  },[yourPlayer?.resources.health])
 
   return (
     <div className="flex flex-col h-screen">
@@ -160,7 +109,7 @@ const Game = () => {
                     {/* Attack Player Button */}
                     <div className="">
                       <button
-                        onClick={() => handleAction("attackPlayer")}
+                        onClick={() => handleAction("attack", player.user)}
                         className="bg-red-500 text-white p-1 rounded-md"
                       >
                         Attack Player
@@ -313,31 +262,7 @@ const Game = () => {
           
           */}
       </div>
-      {/* <div className="flex p-4">
-        {items.map((item, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-20 h-20 rounded-full mb-2"
-            />
-            <p className="text-center font-semibold mb-2">{item.name}</p>
-            <p className="text-xs mb-2">{item.description}</p>
-            <p className="text-sm font-bold mb-2">${item.price}</p>
-            {item.upgradeable && (
-              <p className="text-xs mb-2">
-                Upgradeable ({item.maxUpgrade} times)
-              </p>
-            )}
-            <button
-              onClick={() => buyItem(item)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Buy
-            </button>
-          </div>
-        ))}
-      </div> */}
+      
     </div>
   );
 };
